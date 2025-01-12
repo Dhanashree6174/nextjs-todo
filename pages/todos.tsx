@@ -21,6 +21,19 @@ const Todos = () => {
   //     });
   // }, []);
 
+  useEffect(() => {
+    const storedTodos = localStorage.getItem("todos");
+    const todos = storedTodos ? JSON.parse(storedTodos) : [];
+
+    if (todos) {
+      setTodos(todos);
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("todos", JSON.stringify(todos));
+  }, [todos]);
+
   const addTodo = () => {
     setTodos((prev) => [
       { id: todos.length + 1, text: newTodo, completed: false },
@@ -44,9 +57,9 @@ const Todos = () => {
   };
 
   return (
-    <div className="m-auto text-center py-5">
-      <h1 className="text-2xl text-bold">My To-Dos</h1>
-      <form onSubmit={add} className="flex  m-auto justify-center">
+    <div className="m-auto text-center py-10">
+      <h1 className="text-2xl text-bold pb-5">My To-Dos</h1>
+      <form onSubmit={add} className="flex m-auto justify-center">
         <input
           type="text"
           value={newTodo}
@@ -60,7 +73,7 @@ const Todos = () => {
       </form>
       <ul>
         {todos.map((todo) => (
-          <li key={todo.id} className="flex justify-center space-x-60">
+          <li key={todo.id} className="flex m-auto justify-between items-center max-w-xl pb-3">
             <div className="flex">
               <input
                 type="checkbox"
