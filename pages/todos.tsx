@@ -1,4 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, FormEventHandler } from "react";
+import { MdDeleteOutline } from "react-icons/md";
+import { MdEdit } from "react-icons/md";
 import Link from "next/link";
 
 type Todo = {
@@ -11,6 +13,8 @@ const Todos = () => {
   const [todos, setTodos] = useState<Todo[]>([]); // need to specify type of array
   const [newTodo, setNewTodo] = useState("");
   const [toggleComplete, setToggleComplete] = useState(false);
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editText, setEditText] = useState("");
 
   // useEffect(() => {
   //   fetch("/api/todos")
@@ -42,7 +46,7 @@ const Todos = () => {
     setNewTodo("");
   };
 
-  const add = (e: any) => {
+  const add: FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
     if (!newTodo) return;
     return addTodo();
@@ -54,6 +58,24 @@ const Todos = () => {
         todo.id === id ? { ...todo, completed: !todo.completed } : todo
       )
     );
+  };
+
+  const deleteTodo = (id: number) => {
+    setTodos((prev) => prev.filter((todo) => todo.id !== id));
+  };
+
+  const startEditing = (id: number, text: string) => {
+    setEditingId(id);
+    setEditText(text);
+  };
+
+  const updateTodo = (id: number) => {
+    setTodos((prev) =>
+      prev.map((todo) => (todo.id === id ? { ...todo, text: editText } : todo))
+    );
+
+    setEditingId(null);
+    setEditText("");
   };
 
   return (
@@ -73,7 +95,11 @@ const Todos = () => {
       </form>
       <ul>
         {todos.map((todo) => (
-          <li key={todo.id} className="flex m-auto justify-between items-center max-w-xl pb-3">
+          <li
+            key={todo.id}
+            className="flex m-auto my-2 justify-between items-center max-w-xl pb-3"
+            style={{ height: "35px" }}
+          >
             <div className="flex">
               <input
                 type="checkbox"
@@ -81,15 +107,46 @@ const Todos = () => {
                 checked={todo.completed}
                 onChange={() => toggleCompleteButton(todo.id)}
               />
-              {todo.text}
+              {editingId === todo.id ? (
+                <input
+                  type="text"
+                  value={editText}
+                  className="border border-gray-400 rounded-lg p-1"
+                  onChange={(e) => setEditText(e.target.value)}
+                />
+              ) : (
+                <span>{todo.text}</span>
+              )}
             </div>
-            <div>
+            <div className="flex items-center">
               <span className="ml-5">
                 {todo.completed ? "Completed" : "Not Completed"}
               </span>
-              <Link href={`/todos/${todo.id}`} className="ml-5 underline">
+              <Link href={`/todos/${todo.id}`} className="ml-5 mr-2 underline">
                 View Details
               </Link>
+              <button className="mx-2 mb-1" onClick={() => deleteTodo(todo.id)}>
+                <MdDeleteOutline />
+              </button>
+              <div style={{ width: "50px", textAlign: "center" }}>
+                {editingId === todo.id ? (
+                  <button
+                    className="ml-2 mb-1 text-green-500"
+                    onClick={() => updateTodo(todo.id)}
+                  >
+                    Save
+                  </button>
+                ) : (
+                  <button
+                    className="ml-2 mb-1"
+                    onClick={() =>
+                      !todo.completed && startEditing(todo.id, todo.text)
+                    }
+                  >
+                    <MdEdit />
+                  </button>
+                )}
+              </div>
             </div>
           </li>
         ))}
