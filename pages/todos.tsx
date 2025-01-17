@@ -12,7 +12,6 @@ type Todo = {
 const Todos = () => {
   const [todos, setTodos] = useState<Todo[]>([]); // need to specify type of array
   const [newTodo, setNewTodo] = useState("");
-  const [toggleComplete, setToggleComplete] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editText, setEditText] = useState("");
 
@@ -27,7 +26,7 @@ const Todos = () => {
 
   useEffect(() => {
     const storedTodos = localStorage.getItem("todos");
-    const todos = storedTodos ? JSON.parse(storedTodos) : [];
+    const todos: Todo[] = storedTodos ? JSON.parse(storedTodos) : [];
 
     if (todos) {
       setTodos(todos);
