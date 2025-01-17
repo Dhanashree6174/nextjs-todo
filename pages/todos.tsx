@@ -84,7 +84,7 @@ const Todos = () => {
         <input
           type="text"
           value={newTodo}
-          className="w-full max-w-2xl m-5 p-1 border border-black-500 rounded-lg"
+          className="w-full max-w-2xl m-5 p-1 border border-black-500 rounded-lg text-black"
           onChange={(e) => setNewTodo(e.target.value)}
           placeholder="Enter new to-do..."
         />
@@ -110,7 +110,7 @@ const Todos = () => {
                 <input
                   type="text"
                   value={editText}
-                  className="border border-gray-400 rounded-lg p-1"
+                  className="border border-gray-400 rounded-lg p-1 text-black"
                   onChange={(e) => setEditText(e.target.value)}
                 />
               ) : (
